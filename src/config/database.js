@@ -26,7 +26,7 @@ const connect = connector => {
 
 	const schema = new Schema(params.driver, params)
 
-	promisify(schema.autoupdate)
+	schema.autoupdate(() => {})
 
 	return schema
 }
