@@ -9,14 +9,13 @@
 	"bugs": "https://github.com/layoutzweb/jambda/issues",
 	"repository": "https://github.com/layoutzweb/jambda",
 	"scripts": {
-		"precommit": "lint-staged",
-		"deploy": "npm-run-all lint:js jest:u npm publish",
-		"jest": "jest .test --config ./jest.config.json --coverage",
-		"jest:u": "jest -u --coverage",
 		"lint:js": "eslint lib",
 		"lint:js:fix": "eslint lib --fix",
-		"compile":
-			"babel --ignore node_modules --presets es2015,stage-0 -d dist/ src/",
+		"jest": "jest .test --config ./jest.config.json --coverage",
+		"precommit": "lint-staged",
+		"deploy": "npm-run-all lint:js jest:u",
+		"jest:u": "jest -u --coverage",
+		"compile": "babel --ignore node_modules -d dist/ src/",
 		"build":
 			"set NODE_ENV=production && webpack --config webpack.config.js --colors -p",
 		"test:u": "npm-run-all lint:js copy babel jest:u"
