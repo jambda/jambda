@@ -2,8 +2,12 @@
 
 #### The easiest way to deploy database connected rest api's in a serverless platform.
 
+**This project is still under development and will be open for pull request's soon.**
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/650bb0ae80ec4bfab67f3e630496529b)](https://www.codacy.com/app/layoutzweb/jambda?utm_source=github.com&utm_medium=referral&utm_content=layoutzweb/jambda&utm_campaign=Badge_Grade)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![Build Status](https://travis-ci.org/layoutzweb/jambda.svg?branch=master)](https://travis-ci.org/layoutzweb/jambda)
+[![npm](https://img.shields.io/npm/dt/express.svg)]()
 
 Jambda was created out of my desire to get better at node and get more experience with
 serverless platforms.
@@ -69,7 +73,7 @@ Create an instance of Jambda passing the connector name currently one of: redis,
 arangodb, firebase, and an array of models.
 
 ```javascript
-export const handler = app([connector], [model1, model2, ...])
+export const handler = Jambda([connector], [model1, model2, ...])
 ```
 
 Done! You have your self a REST api for every single model you have passed in to Jambda!
