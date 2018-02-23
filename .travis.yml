@@ -1,3 +1,11 @@
 language: node_js
 node_js:
-  - "8"
+- '8'
+deploy:
+  provider: npm
+  email: jmilanes.dev@gmail.com
+  api_key:
+    secure: HI2zwHE3D4aDtjPkyfRxUf7kpvqZAqYRyUzQ506lnWhVUdBT6hzJLObXoBfZb7HUw0wqxx9UlYOZa5XuWBMTRUN76FDR7p/xi+2bUjy1mK3oadfj0lw/kK4eRaBeYZaWDc4k1V3jm/e5Lg2X7WhRZHmcyBhyF5/GGgEebLq53roJ2zcVQPVRAZMnd3Mh0SUBjuAq7wHSiwZQgS8D3wRgV1hretPHvWoThTcqZwmqdiOzQoyZp2eOoJDnADn2jYHyiJFsvRtCN2hC9h6SpyfV2wS+wzTn9+N/R6Pfxrr3zxWq87XaYo96obqhyQLtu3db67x5mb/MsFSLXYQgGN5UGY3oJ3HwAeDmEvVZyuPJbuZS8PFNFicav2fv9T+YaOwm2nYLh+PIw/xYJjUWF/cSVnTIyr9vkZW5kLb83r/5Ddh5x/zNDedexLXxw2nF2E49eMFHFXUCXfE/7jva07O9yDOQ1pWtIpc3AmRu58rzqkAeyKqXfMzBKlVr03e6xezdgqcThU6Sy7gHZh6h0Kp6nJdTJ1ShIrbSFvZjZjt/ayWivRp0UQHpO1nk2GHP2hlLOePVG0atTJg5SMFgTtrxMJ8Z3117BQ098occvbL8ZZ0DIok81519LkCbYkRiJ8jVZMABQbGi7scsntJI576EVTW8BBN7ssZ+c2aWOY8gzys=
+  on:
+    tags: true
+    repo: layoutzweb/jambda
