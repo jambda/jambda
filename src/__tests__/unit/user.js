@@ -2,12 +2,12 @@ if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'test'
 }
 
-import caminte from 'caminte'
-const Schema = caminte.Schema
-import database from '../../src/config/database'
-import UserModel from '../../src/models/user.model'
+import connect from '../../config/database'
+const schema = connect('rethinkdb')
+import UserModel from '../../models/user.model'
 
-const User = UserModel(database('rethinkdb'))
+const User = new UserModel(schema)
+import userData from '../../data/user.json'
 
 /**
  * Simple tests for the Article model
@@ -18,7 +18,7 @@ describe('User unit:', () => {
 	let user, id
 
 	beforeAll(done => {
-		Schema.autoupdate(done)
+		User.destroyAll(done)
 	})
 
 	afterAll(done => {
@@ -26,9 +26,9 @@ describe('User unit:', () => {
 	})
 
 	describe('create', () => {
-		user = new User()
+		user = new User(userData)
 		it('user should be object', () => {
-			expect(user).toBeInstanceOf('object')
+			expect(user).toBeInstanceOf(Object)
 		})
 
 		it('validate', done => {

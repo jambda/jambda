@@ -2,21 +2,20 @@ if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'test'
 }
 
-import schema from './../../src/config/database'
-const model = require('../../src/models/user.model')
-const User = new model(schema)
+import connect from '../../config/database'
+import Model from '../../models/user.model'
 
-console.log('USER')
-console.log(User)
+const schema = connect('rethinkdb')
+const User = new Model(schema)
 
-import userData from './../data/user.json'
+import userData from '../../data/user.json'
 
 describe('User model:', function() {
 	'use strict'
 	let id
 
-	beforeAll(function(done) {
-		schema.autoupdate(done)
+	beforeAll(done => {
+		User.destroyAll(done)
 	})
 
 	afterAll(function(done) {
@@ -25,7 +24,7 @@ describe('User model:', function() {
 
 	it('#create', done => {
 		User.create(userData, (err, created) => {
-			expect(err).toBeNull()
+			expect(err).toBeFalsy()
 			expect(created).toHaveProperty('id')
 
 			id = created.id
@@ -111,8 +110,8 @@ describe('User model:', function() {
 			expect(err).toBeNull()
 
 			User.find({}, (err, founds) => {
-				expect(err).toBeUndefined()
-				expect(founds.length).toEqual(0)
+				expect(err).toBeNull()
+				expect(founds).toHaveLength(0)
 
 				done()
 			})

@@ -3,20 +3,20 @@ if (!process.env.NODE_ENV) {
 }
 
 import request from 'supertest'
-import model from '../../src/models/user.model'
-import app from './../../src/app'
+import model from '../../models/user.model'
+import Jambda from './../../index'
 
-import userData from './../data/user.json'
-import putUserData from './../data/put-user.json'
-import duplicatedEmailData from './../data/duplicated-email-user.json'
-import duplicatedUsernameData from './../data/duplicated-username-user.json'
+import userData from '../../data/user.json'
+import putUserData from '../../data/put-user.json'
+import duplicatedEmailData from '../../data/duplicated-email-user.json'
+import duplicatedUsernameData from '../../data/duplicated-username-user.json'
 
-const application = app('user', model)
+const application = Jambda('rethinkdb', [model])
 let id, user
 
 describe('Resource Routes:', function() {
 	it('should get a new resource', function(done) {
-		request(application)
+		return request(application)
 			.post('/user/new')
 			.send(userData)
 			.set('Accept', 'application/json')
@@ -151,9 +151,6 @@ describe('Resource Routes:', function() {
 			.send({ name: NEW_TITLE })
 			.expect(200)
 			.then(res => {
-				console.log('ERROR')
-				console.log(res.body)
-
 				expect(res.body).toBeInstanceOf(Object)
 				expect(res.body).toHaveProperty('id')
 				expect(res.body).toHaveProperty('name')
@@ -162,8 +159,6 @@ describe('Resource Routes:', function() {
 				done()
 			})
 			.catch(err => {
-				console.log('ERROR')
-				console.log(err)
 				done(err)
 			})
 	})
@@ -182,9 +177,9 @@ describe('Resource Routes:', function() {
 				expect(res.body.email).toEqual(putUserData.email)
 				expect(res.body.password).toEqual(putUserData.password)
 				expect(res.body).toHaveProperty('validated')
-				expect(res.body.validated).toEqual(false)
+				expect(res.body.validated).toEqual(true)
 				expect(res.body).toHaveProperty('active')
-				expect(res.body.active).toEqual(false)
+				expect(res.body.active).toEqual(true)
 				expect(res.body).toHaveProperty('created')
 
 				done()
