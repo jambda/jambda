@@ -1,8 +1,5 @@
-import {success, failure} from '../helper/response'
-import caminte from 'caminte'
-const Schema = caminte.Schema
+import { success } from '../helper/response'
 import * as repository from '../lib/repository'
-
 
 /**
  * et one or all of the records
@@ -12,13 +9,12 @@ import * as repository from '../lib/repository'
  * @param {Schema} model The current model
  * @returns {Function} An express-middleware
  */
-const __new = (model) => {
+const __new = model => {
+	const empty = repository.empty(model)
 
-    const empty = repository.empty(model);
-
-    return (req, res, next) => {
-        success(200, empty(req.body), res);
-    };
+	return (req, res) => {
+		success(200, empty(req.body), res)
+	}
 }
 
-export default __new;
+export default __new

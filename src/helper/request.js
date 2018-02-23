@@ -1,45 +1,21 @@
 /**
  * Checks if the request has an id
  *
- * @param req
- * @returns {boolean}
+ * @param {object} req The request object
+ * @returns {boolean} True if it as an ID false otherwise
  * @private
  */
-export const __requestHasId = (req) => {
-    return req.params && req.params.id
-};
+export const __requestHasId = req => {
+	return req.params && req.params.id
+}
 
 /**
  * Get's the event id parameter
  *
- * @param req
- * @returns {null}
+ * @param {object} req The request object
+ * @returns {any|null} The id if it exists null otherwise
  * @private
  */
-export const __getRequestId = (req) => {
-    return __requestHasId(req) ? req.params.id : null;
-};
-
-/**
- * Get's the correct payload depending on the request method
- *
- * @param event
- * @returns {*}
- * @private
- */
-export const __getRequestPayload = (event) => {
-
-    switch(event.httpMethod) {
-        case 'POST':
-        case 'PUT':
-            return __body(event);
-            break;
-        case 'DELETE':
-        case 'GET':
-            if(__hasId(event)) {
-                return event.pathParameters.id
-            }
-            return event.query;
-            break;
-    }
-};
+export const __getRequestId = req => {
+	return __requestHasId(req) ? req.params.id : null
+}

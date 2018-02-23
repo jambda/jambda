@@ -1,9 +1,6 @@
-import {success, failure} from '../helper/response'
-import {notFound} from 'boom'
-import caminte from 'caminte'
-const Schema = caminte.Schema
+import { success } from '../helper/response'
+import { notFound } from 'boom'
 import * as repository from '../lib/repository'
-
 
 /**
  * et one or all of the records
@@ -13,26 +10,24 @@ import * as repository from '../lib/repository'
  * @param {Schema} model The current model
  * @returns {Function} An express-middleware
  */
-const __get = (model) => {
+const __get = model => {
+	const list = repository.list(model)
+	const get = repository.get(model)
 
-    const list = repository.list(model);
-    const get = repository.get(model);
+	return (req, res, next) => {
+		const { params } = req
+		const promise = params.id ? get(params.id) : list({})
 
-    return (req, res, next) => {
-
-        const {params} = req;
-        const promise = params.id ? get(params.id) : list({});
-
-        promise
-            .then((response) => {
-                if(params.id && !response) {
-                    next(notFound('Record not found!'), res);
-                } else {
-                    success(200, response, res);
-                }
-            })
-            .catch(next);
-    };
+		promise
+			.then(response => {
+				if (params.id && !response) {
+					next(notFound('Record not found!'), res)
+				} else {
+					success(200, response, res)
+				}
+			})
+			.catch(next)
+	}
 }
 
-export default __get;
+export default __get

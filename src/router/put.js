@@ -1,9 +1,6 @@
-import {success, failure} from '../helper/response'
-import caminte from 'caminte'
-import {notFound} from 'boom'
-const Schema = caminte.Schema
+import { success } from '../helper/response'
+import { notFound } from 'boom'
 import * as repository from '../lib/repository'
-
 
 /**
  * Replaces an existing record
@@ -12,23 +9,24 @@ import * as repository from '../lib/repository'
  * @returns {Function} An express-middleware
  * @private
  */
-const __put = (model) => {
+const __put = model => {
+	const put = repository.put(model)
 
-    const put = repository.put(model)
+	return (req, res, next) => {
+		put(req.params.id, req.body)
+			.then(response => {
+				if (!response) {
+					return next(
+						notFound(
+							`Resource with id ${req.params.id} does not exist!`
+						)
+					)
+				}
 
-    return (req, res, next) => {
-
-        put(req.params.id, req.body)
-            .then((response) => {
-
-                if(!response) {
-                    return next(notFound(`Resource with id ${req.params.id} does not exist!`))
-                }
-
-                success(200, response, res);
-            })
-            .catch(next);
-    };
+				success(200, response, res)
+			})
+			.catch(next)
+	}
 }
 
-export default __put;
+export default __put

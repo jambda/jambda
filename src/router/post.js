@@ -1,8 +1,5 @@
-import {success} from '../helper/response'
+import { success } from '../helper/response'
 import * as repository from '../lib/repository'
-import caminte from 'caminte'
-const Schema = caminte.Schema
-
 
 /**
  * Creates a new record
@@ -10,18 +7,16 @@ const Schema = caminte.Schema
  * @param {Schema} model The current model
  * @returns {Function} An express-middleware
  */
-const __post = (model) => {
+const __post = model => {
+	const create = repository.create(model)
 
-    const create = repository.create(model);
-
-    return (req, res, next) => {
-
-        create(req.body)
-            .then((response) => {
-                success(200, response, res);
-            })
-            .catch(next);
-    };
+	return (req, res, next) => {
+		create(req.body)
+			.then(response => {
+				success(200, response, res)
+			})
+			.catch(next)
+	}
 }
 
-export default __post;
+export default __post

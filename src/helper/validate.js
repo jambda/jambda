@@ -1,25 +1,26 @@
-import {badData} from 'boom';
-import caminte from 'caminte'
-const Schema = caminte.Schema
-
+import { badData } from 'boom'
 
 /**
  * Helper function to set the error response for invalid models
  *
- * @param {Schema} model
- * @param {Function} reject
- * @param {Function} callback
+ * @param {Schema} model The model
+ * @param {Function} reject The reject callback
+ * @param {Function} callback The success callback
+ * @returns {void}
  */
 const validate = (model, reject, callback) => {
+	model.isValid(isValid => {
+		if (!isValid) {
+			return reject(
+				badData(
+					'Invalid data provided, please verify and try again!',
+					model.errors
+				)
+			)
+		}
 
-    model.isValid((isValid) => {
-        if (!isValid) {
-            console.log(model.errors);
-            return reject(badData('Invalid data provided, please verify and try again!', model.errors));
-        }
-
-        callback(model);
-    })
+		callback(model)
+	})
 }
 
-export default validate;
+export default validate
