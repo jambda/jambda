@@ -4,7 +4,7 @@ import cors from 'cors'
 import compression from 'compression'
 import winston from 'winston'
 import expressWinston from 'express-winston'
-import database from './config/database'
+import connect from './config/database'
 import router from './router'
 import error from './lib/error'
 import serverless from 'serverless-http'
@@ -16,7 +16,7 @@ import serverless from 'serverless-http'
  * @param {Schema[]} models The array of models to be added as api's
  * @returns {express} The Express app
  */
-const app = (connector, models) => {
+const Jambda = (connector, models) => {
 	const app = express()
 
 	app.use(compression())
@@ -44,14 +44,16 @@ const app = (connector, models) => {
 		)
 	}
 
+	const db = connect(connector)
+
 	models.forEach(model => {
-		const m = new model(database(connector))
+		const m = new model(db)
 		app.use(`/${m.modelName}`, router(m))
 	})
 
 	app.use(error)
 
-	return serverless(app)
+	return process.env.NODE_ENV === 'test' ? app : serverless(app)
 }
 
-export default app
+export default Jambda
