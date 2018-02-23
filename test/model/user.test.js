@@ -1,130 +1,125 @@
 if (!process.env.NODE_ENV) {
-    process.env.NODE_ENV = 'test';
+	process.env.NODE_ENV = 'test'
 }
 
 import schema from './../../src/config/database'
-const model = require('../../src/models/user.model');
-const User = new model(schema);
+const model = require('../../src/models/user.model')
+const User = new model(schema)
 
-console.log('USER');
-console.log(User);
+console.log('USER')
+console.log(User)
 
 import userData from './../data/user.json'
 
-describe('User model:', function () {
-    'use strict';
-    let id;
+describe('User model:', function() {
+	'use strict'
+	let id
 
-    beforeAll(function (done) {
-        schema.autoupdate(done);
-    });
+	beforeAll(function(done) {
+		schema.autoupdate(done)
+	})
 
-    afterAll(function (done) {
-        User.destroyAll(done);
-    });
+	afterAll(function(done) {
+		User.destroyAll(done)
+	})
 
-    it('#create', (done) => {
-        User.create(userData, (err, created) => {
+	it('#create', done => {
+		User.create(userData, (err, created) => {
+			expect(err).toBeNull()
+			expect(created).toHaveProperty('id')
 
-            expect(err).toBeNull();
-            expect(created).toHaveProperty('id');
+			id = created.id
+			done()
+		})
+	})
 
-            id = created.id;
-            done();
-        });
-    });
+	it('#exists', done => {
+		User.exists(id, (err, exists) => {
+			expect(err).toBeNull()
+			expect(exists).toEqual(true)
 
-    it('#exists', (done) => {
-        User.exists(id, (err, exists) => {
+			done()
+		})
+	})
 
-            expect(err).toBeNull();
-            expect(exists).toEqual(true);
+	it('#findById', done => {
+		User.findById(id, (err, found) => {
+			expect(err).toBeNull()
+			expect(found.id).not.toBeNull()
+			done()
+		})
+	})
 
-            done();
-        });
-    });
+	it('#findOne', done => {
+		User.findOne(
+			{
+				where: {
+					id: id
+				}
+			},
+			(err, found) => {
+				expect(err).toBeNull()
+				expect(found.id).toEqual(id)
 
-    it('#findById', (done) => {
-        User.findById(id, (err, found) => {
+				done()
+			}
+		)
+	})
 
-            expect(err).toBeNull();
-            expect(found.id).not.toBeNull();
-            done();
+	it('#find', done => {
+		User.find({}, (err, founds) => {
+			expect(err).toBeNull()
+			expect(founds.length).toBeGreaterThan(0)
 
-        });
-    });
+			done()
+		})
+	})
 
-    it('#findOne', (done) => {
-        User.findOne({
-            where: {
-                id: id
-            }
-        }, (err, found) => {
+	it('#all', done => {
+		User.all({}, (err, founds) => {
+			expect(err).toBeNull()
+			expect(founds.length).toBeGreaterThan(0)
 
-            expect(err).toBeNull();
-            expect(found.id).toEqual(id);
+			done()
+		})
+	})
 
-            done();
-        });
-    });
+	it('#count', done => {
+		User.count({}, (err, count) => {
+			expect(err).toBeNull()
+			expect(count).toBeGreaterThan(0)
 
-    it('#find', (done) => {
-        User.find({}, (err, founds) => {
+			done()
+		})
+	})
 
-            expect(err).toBeNull();
-            expect(founds.length).toBeGreaterThan(0);
+	it('#destroyById', done => {
+		User.destroyById(id, err => {
+			expect(err).toBeNull()
 
-            done();
-        });
-    });
+			User.findById(id, (err, found) => {
+				expect(err).toBeNull()
+				expect(found).toBeNull()
 
-    it('#all', (done) => {
-        User.all({}, (err, founds) => {
+				done()
+			})
+		})
+	})
 
-            expect(err).toBeNull();
-            expect(founds.length).toBeGreaterThan(0);
+	it('#destroyAll', done => {
+		User.destroyAll(err => {
+			expect(err).toBeNull()
 
-            done();
-        });
-    });
+			User.find({}, (err, founds) => {
+				expect(err).toBeUndefined()
+				expect(founds.length).toEqual(0)
 
-    it('#count', (done) => {
-        User.count({}, (err, count) => {
+				done()
+			})
+		})
+	})
 
-            expect(err).toBeNull();
-            expect(count).toBeGreaterThan(0);
-
-            done();
-        });
-    });
-
-    it('#destroyById', (done) => {
-        User.destroyById(id, (err) => {
-            expect(err).toBeNull();
-
-            User.findById(id, (err, found) => {
-                expect(err).toBeNull();
-                expect(found).toBeNull();
-
-                done();
-            });
-        });
-    });
-
-    it('#destroyAll', (done) => {
-        User.destroyAll((err) => {
-            expect(err).toBeNull();
-
-            User.find({}, (err, founds) => {
-                expect(err).toBeUndefined();
-                expect(founds.length).toEqual(0);
-
-                done();
-            });
-        });
-    });
-
-    /*
+	/*
     describe('properties methods:', function () {
 
         it('#toString', function () {
@@ -346,4 +341,4 @@ describe('User model:', function () {
         });
     });
 */
-});
+})

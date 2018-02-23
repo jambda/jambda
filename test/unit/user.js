@@ -1,81 +1,72 @@
 if (!process.env.NODE_ENV) {
-    process.env.NODE_ENV = 'test';
+	process.env.NODE_ENV = 'test'
 }
 
-import should from 'should'
+import caminte from 'caminte'
+const Schema = caminte.Schema
 import database from '../../src/config/database'
-import UserModel from '../../src/models/UserModel'
+import UserModel from '../../src/models/user.model'
 
-console.log('DATABASE');
-console.log(database);
-
-const User = UserModel(database);
-
+const User = UserModel(database('rethinkdb'))
 
 /**
  * Simple tests for the Article model
  */
 describe('User unit:', () => {
-    'use strict';
-    let user, id;
+	'use strict'
 
-    before((done) => {
-        schema.autoupdate(done);
-    });
+	let user, id
 
-    after((done) => {
-        User.destroyAll(done);
-    });
+	beforeAll(done => {
+		Schema.autoupdate(done)
+	})
 
-    describe('create', () => {
+	afterAll(done => {
+		User.destroyAll(done)
+	})
 
-        user = new User();
-        it('user should be object', () => {
-            user.should.be.type('object');
-        });
+	describe('create', () => {
+		user = new User()
+		it('user should be object', () => {
+			expect(user).toBeInstanceOf('object')
+		})
 
-        it('validate', (done) => {
-            user.isValid((valid) => {
-                valid.should.be.true;
-                if (!valid) console.log(user.errors);
-                done();
-            });
-        });
+		it('validate', done => {
+			user.isValid(valid => {
+				expect(valid).toBeTruthy()
+				done()
+			})
+		})
+	})
 
-    });
+	describe('save', () => {
+		it('should be have #save', () => {
+			expect(user).toHaveProperty('save')
+			expect(user.save).toBeInstanceOf(Function)
+		})
 
-    describe('save', () => {
+		it('call', done => {
+			user.save(err => {
+				expect(err).toBeFalsy()
+				expect(user).toHaveProperty('id')
+				expect(user.id).not.toBeNull()
+				id = user.id
+				done()
+			})
+		})
+	})
 
-        it('should be have #save', () => {
-            user.should.be.have.property('save');
-            user.save.should.be.type('function');
-        });
+	describe('destroy', () => {
+		it('should be have #destroy', () => {
+			expect(user).toHaveProperty('destroy')
+			expect(user.destroy).toBeInstanceOf(Function)
+		})
 
-        it('call', (done) => {
-            user.save((err) => {
-                should.not.exist(err);
-                user.should.be.have.property('id');
-                user.id.should.not.eql(null);
-                id = user.id;
-                done();
-            });
-        });
-
-    });
-
-    describe('destroy', () => {
-
-        it('should be have #destroy', () => {
-            user.should.be.have.property('destroy');
-            user.destroy.should.be.type('function');
-        });
-
-        it('call', (done) => {
-            user.destroy((err) => {
-                should.not.exist(err);
-                done();
-            });
-        });
-
-    });
-});
+		it('call', done => {
+			user.destroy(err => {
+				expect(err).toBeFalsy()
+				done()
+			})
+		})
+	})
+})
