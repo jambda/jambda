@@ -1,6 +1,4 @@
 import { success } from '../helper/response'
-import caminte from 'caminte'
-const Schema = caminte.Schema
 import * as repository from '../lib/repository'
 
 /**
