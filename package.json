@@ -15,10 +15,11 @@
 		"precommit": "lint-staged",
 		"deploy": "npm-run-all lint:js jest:u",
 		"jest:u": "jest -u --coverage",
-		"compile": "babel --ignore node_modules -d dist/ src/",
-		"build":
-			"set NODE_ENV=production && webpack --config webpack.config.js --colors -p",
-		"test:u": "npm-run-all lint:js copy babel jest:u"
+		"compile": "babel --ignore node_modules, __tests__ -d dist/ src/",
+		"test:u": "npm-run-all lint:js copy babel jest:u",
+		"build": "npm-run-all lint:js:fix jest compile",
+		"pretty":
+			"prettier --config ./.prettierrc.yml --write \"{src,__{tests,mocks}__}/**/*.js\""
 	},
 	"devDependencies": {
 		"aws-sdk-mock": "^1.7.0",
