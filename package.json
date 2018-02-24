@@ -105,6 +105,9 @@
 		"winston": "^2.4.0"
 	},
 	"lint-staged": {
-		"*.{js,json,css,md}": ["prettier --write", "git add"]
+		"*.{js,json,css,md}": [
+			"prettier --config ./.prettierrc.yml --write \"{src,__{tests,mocks}__}/**/*.js\"",
+			"git add"
+		]
 	}
 }
