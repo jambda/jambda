@@ -1,8 +1,21 @@
 {
 	"name": "jambda",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description":
 		"Easy serverless rest api deploy! Jambda makes it easy to deploy database connected rest api's by providing the least amount of configuration.",
+	"keywords": [
+		"aws",
+		"lambda",
+		"aws lambda",
+		"lambda express",
+		"rest",
+		"lambda rest",
+		"restapi",
+		"express server",
+		"express",
+		"express-lambda",
+		"lamdba rest api"
+	],
 	"author": "jair Milanes",
 	"license": "MIT",
 	"main": "dist/index.js",
@@ -15,7 +28,8 @@
 		"precommit": "lint-staged",
 		"deploy": "npm-run-all lint:js jest:u",
 		"jest:u": "jest -u --coverage",
-		"compile": "babel --ignore node_modules, __tests__ -d dist/ src/",
+		"compile":
+			"babel --ignore node_modules --ignore __tests__ -d dist/ src/",
 		"test:u": "npm-run-all lint:js copy babel jest:u",
 		"build": "npm-run-all lint:js:fix jest compile",
 		"pretty":
@@ -70,6 +84,7 @@
 		"body-parser": "^1.18.2",
 		"boom": "^7.1.0",
 		"caminte": "^0.4.0",
+		"commander": "^2.14.1",
 		"compression": "^1.7.1",
 		"cors": "^2.8.4",
 		"dotenv": "^5.0.0",
@@ -86,7 +101,7 @@
 		"serverless-http": "^1.5.3",
 		"sqlite3": "^3.1.0",
 		"underscore": "^1.8.3",
-		"uuid": "^3.1.0",
+		"uuid": "^3.2.1",
 		"winston": "^2.4.0"
 	},
 	"lint-staged": {
