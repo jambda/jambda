@@ -5,7 +5,7 @@
  */
 module.exports = function(schema) {
 	const Model = schema.define(
-		'test_model',
+		'resource',
 		{
 			uuid: { type: schema.UUID, unique: true },
 			boolean: { type: schema.Boolean, default: false },
@@ -32,6 +32,8 @@ module.exports = function(schema) {
 		'date'
 	)
 
+	Model.validatesUniquenessOf('uuid')
+
 	Model.validatesLengthOf('string', {
 		min: 5,
 		max: 20,
@@ -40,8 +42,6 @@ module.exports = function(schema) {
 			max: 'String is too long'
 		}
 	})
-
-	Model.validatesUniquenessOf('uuid')
 
 	Model.validatesNumericalityOf('float', {
 		message: 'Must be a float'

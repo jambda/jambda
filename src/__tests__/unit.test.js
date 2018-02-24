@@ -4,10 +4,10 @@ if (!process.env.NODE_ENV) {
 
 import connect from '../config/database'
 const schema = connect('rethinkdb')
-import UserModel from './user.model'
+import Model from './model'
 
-const User = new UserModel(schema)
-import userData from './data/user.json'
+const Resource = new Model(schema)
+import postData from './data/post-data'
 
 /**
  * Simple tests for the Article model
@@ -15,24 +15,24 @@ import userData from './data/user.json'
 describe('User unit:', () => {
 	'use strict'
 
-	let user, id
+	let resource, id
 
 	beforeAll(done => {
-		User.destroyAll(done)
+		Resource.destroyAll(done)
 	})
 
 	afterAll(done => {
-		User.destroyAll(done)
+		Resource.destroyAll(done)
 	})
 
 	describe('create', () => {
-		user = new User(userData)
+		resource = new Resource(postData)
 		it('user should be object', () => {
-			expect(user).toBeInstanceOf(Object)
+			expect(resource).toBeInstanceOf(Object)
 		})
 
 		it('validate', done => {
-			user.isValid(valid => {
+			resource.isValid(valid => {
 				expect(valid).toBeTruthy()
 				done()
 			})
@@ -41,16 +41,16 @@ describe('User unit:', () => {
 
 	describe('save', () => {
 		it('should be have #save', () => {
-			expect(user).toHaveProperty('save')
-			expect(user.save).toBeInstanceOf(Function)
+			expect(resource).toHaveProperty('save')
+			expect(resource.save).toBeInstanceOf(Function)
 		})
 
 		it('call', done => {
-			user.save(err => {
+			resource.save(err => {
 				expect(err).toBeFalsy()
-				expect(user).toHaveProperty('id')
-				expect(user.id).not.toBeNull()
-				id = user.id
+				expect(resource).toHaveProperty('id')
+				expect(resource.id).not.toBeNull()
+				id = resource.id
 				done()
 			})
 		})
@@ -58,12 +58,12 @@ describe('User unit:', () => {
 
 	describe('destroy', () => {
 		it('should be have #destroy', () => {
-			expect(user).toHaveProperty('destroy')
-			expect(user.destroy).toBeInstanceOf(Function)
+			expect(resource).toHaveProperty('destroy')
+			expect(resource.destroy).toBeInstanceOf(Function)
 		})
 
 		it('call', done => {
-			user.destroy(err => {
+			resource.destroy(err => {
 				expect(err).toBeFalsy()
 				done()
 			})

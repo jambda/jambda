@@ -3,38 +3,30 @@ if (!process.env.NODE_ENV) {
 }
 
 import request from 'supertest'
-import model from './user.model'
+import Model from './model'
 import Jambda from '../index'
 
-import userData from './data/user.json'
-import putUserData from './data/put-user.json'
-import duplicatedEmailData from './data/duplicated-email-user.json'
-import duplicatedUsernameData from './data/duplicated-username-user.json'
+import postData from './data/post-data'
+import putData from './data/put-data'
+import patchData from './data/patch-data'
+import invalidPostData from './data/invalid-post-data'
+import invalidDataTypesPostData from './data/invalid-data-types-post-data'
 
-const application = Jambda('rethinkdb', [model])
-let id, user
+const application = Jambda('rethinkdb', [Model])
+let resourceId, resource
 
 describe('Resource Routes:', function() {
 	it('should get a new resource', function(done) {
 		return request(application)
-			.post('/user/new')
-			.send(userData)
+			.post('/resource/new')
+			.send(postData)
 			.set('Accept', 'application/json')
 			.expect(200)
 			.then(res => {
-				expect(res.body).toBeInstanceOf(Object)
-				expect(res.body.id).toBeNull()
-				expect(res.body.name).toEqual(userData.name)
-				expect(res.body.username).toEqual(userData.username)
-				expect(res.body.email).toEqual(userData.email)
-				expect(res.body.password).toEqual(userData.password)
-				expect(res.body).toHaveProperty('validated')
-				expect(res.body.validated).toEqual(false)
-				expect(res.body).toHaveProperty('active')
-				expect(res.body.active).toEqual(false)
-				expect(res.body).toHaveProperty('created')
-
-				user = res.body
+				const { id, ...rest } = res.body
+				expect(rest).toMatchObject(postData)
+				resource = res.body
+				resourceId = id
 				done()
 			})
 			.catch(done)
@@ -42,32 +34,23 @@ describe('Resource Routes:', function() {
 
 	it('should create a new resource', function(done) {
 		request(application)
-			.post('/user')
-			.send(user)
+			.post('/resource')
+			.send(postData)
 			.set('Accept', 'application/json')
 			.expect(200)
 			.then(res => {
-				expect(res.body).toBeInstanceOf(Object)
-				expect(res.body.id).not.toBeNull()
-				expect(res.body.name).toEqual(userData.name)
-				expect(res.body.username).toEqual(userData.username)
-				expect(res.body.email).toEqual(userData.email)
-				expect(res.body.password).toEqual(userData.password)
-				expect(res.body).toHaveProperty('validated')
-				expect(res.body.validated).toEqual(false)
-				expect(res.body).toHaveProperty('active')
-				expect(res.body.active).toEqual(false)
-				expect(res.body).toHaveProperty('created')
-
-				id = res.body.id
+				const { id, ...rest } = res.body
+				expect(rest).toMatchObject(postData)
+				resource = res.body
+				resourceId = id
 				done()
 			})
 			.catch(done)
 	})
-
+	/*
 	it('should not allow duplicated emails', function(done) {
 		request(application)
-			.post('/user')
+			.post('/resource')
 			.send(duplicatedEmailData)
 			.set('Accept', 'application/json')
 			.expect(422)
@@ -84,7 +67,7 @@ describe('Resource Routes:', function() {
 
 	it('should not allow duplicated usernames', function(done) {
 		request(application)
-			.post('/user')
+			.post('/resource')
 			.send(duplicatedUsernameData)
 			.set('Accept', 'application/json')
 			.expect(422)
@@ -98,15 +81,14 @@ describe('Resource Routes:', function() {
 			})
 			.catch(done)
 	})
-
+	*/
 	it('should list all resources', function(done) {
 		request(application)
-			.get('/user')
+			.get('/resource')
 			.set('Accept', 'application/json')
 			.expect(200)
 			.then(res => {
 				expect(res.body.length).toBeGreaterThan(0)
-
 				done()
 			})
 			.catch(done)
@@ -114,7 +96,7 @@ describe('Resource Routes:', function() {
 
 	it('should count all resources', function(done) {
 		request(application)
-			.get('/user/count')
+			.get('/resource/count')
 			.set('Accept', 'application/json')
 			.expect(200)
 			.then(res => {
@@ -129,59 +111,47 @@ describe('Resource Routes:', function() {
 
 	it('should get a single resource', function(done) {
 		request(application)
-			.get('/user/' + id)
+			.get('/resource/' + resourceId)
 			.set('Accept', 'application/json')
 			.expect(200)
 			.then(res => {
 				expect(res.body).toBeInstanceOf(Object)
 				expect(res.body).toHaveProperty('id')
 
-				user = res.body
+				resource = res.body
 				done()
 			})
 			.catch(done)
 	})
 
 	it('should patch a resource', function(done) {
-		const NEW_TITLE = 'User Name Updated'
-
 		request(application)
-			.patch('/user/' + id)
+			.patch('/resource/' + resourceId)
 			.set('Accept', 'application/json')
-			.send({ name: NEW_TITLE })
+			.send(patchData)
 			.expect(200)
 			.then(res => {
-				expect(res.body).toBeInstanceOf(Object)
-				expect(res.body).toHaveProperty('id')
-				expect(res.body).toHaveProperty('name')
-				expect(res.body.name).toEqual(NEW_TITLE)
+				const { id, ...rest } = res.body
+				// @todo Add more validations to patched data
+				expect(rest).toMatchObject(patchData)
 
 				done()
 			})
 			.catch(err => {
+				console.info(err.body)
 				done(err)
 			})
 	})
 
 	it('should put a resource', function(done) {
 		request(application)
-			.put('/user/' + id)
+			.put('/resource/' + resourceId)
 			.set('Accept', 'application/json')
-			.send(putUserData)
+			.send(putData)
 			.expect(200)
 			.then(res => {
-				expect(res.body).toBeInstanceOf(Object)
-				expect(res.body.id).not.toBeNull()
-				expect(res.body.name).toEqual(putUserData.name)
-				expect(res.body.username).toEqual(putUserData.username)
-				expect(res.body.email).toEqual(putUserData.email)
-				expect(res.body.password).toEqual(putUserData.password)
-				expect(res.body).toHaveProperty('validated')
-				expect(res.body.validated).toEqual(true)
-				expect(res.body).toHaveProperty('active')
-				expect(res.body.active).toEqual(true)
-				expect(res.body).toHaveProperty('created')
-
+				const { id, ...rest } = res.body
+				expect(rest).toMatchObject(putData)
 				done()
 			})
 			.catch(err => {
@@ -191,7 +161,7 @@ describe('Resource Routes:', function() {
 
 	it('should delete a resource', function(done) {
 		request(application)
-			.delete('/user/' + id)
+			.delete('/resource/' + resourceId)
 			.set('Accept', 'application/json')
 			.expect(204)
 			.then(res => {

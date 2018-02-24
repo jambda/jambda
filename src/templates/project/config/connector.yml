@@ -1,0 +1,20 @@
+name: 'nano-api'
+database:
+  production:
+    driver: 'rethinkdb',
+    host: '127.0.0.1',
+    port: '32773',
+    database: 'nano_test',
+    autoReconnect: true
+  development:
+    driver: 'rethinkdb',
+    host: '127.0.0.1',
+    port: '32773',
+    database: 'nano_test',
+    autoReconnect: true
+  test:
+    driver: 'rethinkdb',
+    host: '127.0.0.1',
+    port: '32773',
+    database: 'nano_test',
+    autoReconnect: true
