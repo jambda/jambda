@@ -1,6 +1,6 @@
 {
 	"name": "jambda",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description":
 		"Easy serverless rest api deploy! Jambda makes it easy to deploy database connected rest api's by providing the least amount of configuration.",
 	"keywords": [
