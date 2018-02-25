@@ -1,4 +1,3 @@
-import { extend } from 'underscore'
 import boom from 'boom'
 import validate from '../helper/validate'
 
@@ -24,7 +23,7 @@ export const list = model => params => {
 		delete query.limit
 
 		// TODO: it needs implementation for search
-		extend(opts.where, query)
+		opts.where = { ...opts.where, ...query }
 
 		model.all(opts, (err, users) => {
 			if (err) {
@@ -49,7 +48,7 @@ export const count = model => query => {
 		}
 
 		// TODO: it needs implementation
-		extend(opts.where, query)
+		opts.where = { ...opts.where, ...query }
 
 		model.count(opts.where, (err, count) => {
 			if (err) {
@@ -103,7 +102,7 @@ export const patch = model => (id, payload) => {
 					return resolve()
 				}
 
-				extend(user, payload)
+				user = Object.assign(user, payload)
 
 				validate(user, reject, user => {
 					user.save(err => {
