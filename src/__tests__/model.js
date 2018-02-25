@@ -32,6 +32,8 @@ module.exports = function(schema) {
 		'date'
 	)
 
+	Model.allow = ['GET', 'LIST']
+
 	Model.validatesUniquenessOf('uuid')
 
 	Model.validatesLengthOf('string', {

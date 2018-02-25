@@ -5,7 +5,7 @@ if (!process.env.NODE_ENV) {
 import events from 'events'
 import Model from './model'
 import Jambda from './../index'
-const jambda = new Jambda('rethinkdb', [Model])
+const jambda = new Jambda('./src/__tests__/config/connector.yml', [Model])
 
 describe('Jambda', () => {
 	it('should return an Express app if NODE_ENV === "test"', () => {
@@ -14,7 +14,9 @@ describe('Jambda', () => {
 
 	it('should return a Serverless-http instance if NODE_ENV !== "test', () => {
 		process.env.NODE_ENV = 'development'
-		const jambda = new Jambda('rethinkdb', [Model])
+		const jambda = new Jambda('./src/__tests__/config/connector.yml', [
+			Model
+		])
 		expect(jambda).toBeInstanceOf(Function)
 		process.env.NODE_ENV = 'test'
 	})
@@ -24,7 +26,7 @@ describe('Jambda', () => {
 			const mw = jambda._router.stack.filter(
 				middleware => middleware.handle.name === m
 			)
-			return mw.length > 0 ? true : false
+			return mw.length > 0
 		}
 
 		it('should have a compression middleware', () => {

@@ -5,14 +5,13 @@ if (!process.env.NODE_ENV) {
 import request from 'supertest'
 import Model from './model'
 import Jambda from '../index'
-
 import postData from './data/post-data'
 import putData from './data/put-data'
 import patchData from './data/patch-data'
 import invalidPostData from './data/invalid-post-data'
 import invalidDataTypesPostData from './data/invalid-data-types-post-data'
 
-const application = Jambda('rethinkdb', [Model])
+const application = Jambda('./src/__tests__/config/connector.yml', [Model])
 let resourceId, resource
 
 describe('Resource Routes:', function() {

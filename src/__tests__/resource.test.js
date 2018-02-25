@@ -4,8 +4,7 @@ if (!process.env.NODE_ENV) {
 
 import connect from '../config/database'
 import Model from './model'
-
-const schema = connect('rethinkdb')
+const schema = connect('./src/__tests__/config/connector.yml')
 const model = new Model(schema)
 
 import postData from './data/post-data'
