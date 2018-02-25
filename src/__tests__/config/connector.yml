@@ -1,0 +1,20 @@
+name: 'resource'
+database:
+  production:
+    driver: 'rethinkdb'
+    host: '127.0.0.1'
+    port: 32773
+    database: 'test_api'
+    autoReconnect: true
+  development:
+    driver: 'rethinkdb'
+    host: '127.0.0.1'
+    port: 32773
+    database: 'test_api'
+    autoReconnect: true
+  test:
+    driver: 'rethinkdb'
+    host: '127.0.0.1'
+    port: 32773
+    database: 'test_api'
+    autoReconnect: true
