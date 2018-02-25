@@ -25,6 +25,15 @@ deployment. Here are the main ones:
 
 This way you have more time to focus on the business logic of your product.
 
+It uses Express and Caminte to create a resource based rest api, that can be connected to many different
+Sql & NoSql databases & deployed to AWS Lambda using the awesome Serverless Platform.
+
+## Jambda & Serverless
+
+All thought Jambda does not use [Serverless](https://serverless.com) directly, it was made to work side
+by side with the serverless platform.
+Over time the goal is to develop mechanisms to help make this a more seamless integration.
+
 ## Connectors
 
 The nice thing about Jambda is that it is able to connect to multiple data sources
@@ -40,18 +49,39 @@ right of the bet! Yep, you heard it right, as of now you can connect to the foll
 
 ## How to use it
 
+Follew this steps:
+
+#### Install Jambda
+
+Use NPM:
+
+```javascript
+npm install jambda --save
+```
+
+Or use yarn
+
+```javascript
+yarn add jambda
+```
+
+#### Import it into your project
+
 Jambda is easy to implement and launch, follow this easy steps:
 
 ```javascript
 import Jambda from 'jambda'
 ```
 
-Create at least one model representing a database table you want to serve as a restful api:
+#### Create model's
+
+Create at least one model representing a database table you want to serve as a restful api,
+if the table does not exist it will be created on your first request:
 
 ```javascript
  export default model = (schema) => {
 
-    const ModelName = schema.define('user', {
+    const FirstModel = schema.define('user', {
        active : { type : schema.Boolean, default: false },
        validated : { type : schema.Boolean, default: false },
        name : { type : schema.String, index: true },
@@ -70,11 +100,52 @@ Create at least one model representing a database table you want to serve as a r
 Models are based on the [Ceminte Cross-Db ORM](https://github.com/biggora/caminte) package, they have an awesome model
 creator that you can use to create your first model's. [Model Creator](http://www.camintejs.com/en/creator)
 
-Create an instance of Jambda passing the connector name currently one of: redis, rethinkdb, mysqldb, mariadb, mongodb,
-arangodb, firebase, and an array of models.
+#### Create your lambda function
+
+Create the function that will receive the events from the Api Gateway and pass it to Jambda.
+To create an instance of Jambda, pass the connector name, currently one of: redis, rethinkdb,
+mysqldb, mariadb, mongodb, arangodb, firebase, and an array of models.
 
 ```javascript
-export const handler = Jambda([connector], [model1, model2, ...])
+export const handler = Jambda([connector], [[FirstModel, SecondModel, ...]])
+```
+
+#### Create a serverless.yml
+
+In the root of your project, create a file called `serverless.yml`, bellow is a simple example of
+a serverless.yml file, for more options please refer to the [serverless docs](https://serverless.com/framework/docs/providers/aws/guide/quick-start/).
+
+```yaml
+service:
+  name: {{PROJECT_NAME}}
+  publish: false
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: {{REGION}}
+  stage: dev
+  environment:
+    ${env:}
+
+functions:
+  user:
+    handler: dist/handler
+    events:
+      - http: 'ANY /'
+      - http: 'ANY /{proxy+}'
+```
+
+#### Deploy to AWS
+
+Assuming you have your [AWS credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) set up, all you have to do is deploy your function using serverless-cli:
+
+```javascript
+serverless deploy
 ```
 
 Done! You have your self a REST api for every single model you have passed in to Jambda!
@@ -84,7 +155,7 @@ Done! You have your self a REST api for every single model you have passed in to
 To run your lambda REST api locally Jambda provides the offline command, to run it type on the console:
 
 ```javascript
-yarn offline
+npm offline
 ```
 
 Once the server is up, you will have the following endpoints at your service:
