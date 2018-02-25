@@ -9,6 +9,7 @@ import router from './router'
 import error from './lib/error'
 import serverless from 'serverless-http'
 import { logger } from './lib/logger'
+import * as config from './config/config'
 
 /**
  * Creates a new Express application given a prefix and a model
@@ -18,10 +19,23 @@ import { logger } from './lib/logger'
  * @returns {express} The Express app
  */
 const Jambda = (connector, models) => {
-	const app = express()
+	logger.info('Preparing your app...')
+	logger.info(`Environment is ${process.env.NODE_ENV}`)
 
-	app.use(compression())
-	app.use(cors())
+	config.load(connector)
+
+	const app = express()
+	if (
+		!config.has('compression') ||
+		(config.has('compression') && config.get('compression') !== false)
+	) {
+		app.use(compression())
+	}
+
+	if (config.has('cors')) {
+		app.use(cors(config.get('cors', {})))
+	}
+
 	app.use(bodyParser.json())
 	app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -42,7 +56,7 @@ const Jambda = (connector, models) => {
 		)
 	}
 
-	const db = connect(connector)
+	const db = connect()
 
 	models.forEach(model => {
 		const m = new model(db)
@@ -50,6 +64,8 @@ const Jambda = (connector, models) => {
 	})
 
 	app.use(error)
+	logger.info('ROUTES')
+	logger.info(app._routes)
 
 	logger.info('App initialized!')
 	return process.env.NODE_ENV === 'test' ? app : serverless(app)
