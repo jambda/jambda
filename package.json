@@ -1,6 +1,6 @@
 {
 	"name": "jambda",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description":
 		"Easy serverless rest api deploy! Jambda makes it easy to deploy database connected rest api's by providing the least amount of configuration.",
 	"keywords": [
@@ -94,6 +94,7 @@
 		"graphql": "^0.11.7",
 		"graphql-server-lambda": "^1.3.2",
 		"graphql-tools": "^2.21.0",
+		"js-yaml": "^3.10.0",
 		"merge-graphql-schemas": "^1.4.0",
 		"moment": "^2.20.1",
 		"redis": "^2.8.0",
