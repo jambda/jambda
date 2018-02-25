@@ -93,31 +93,110 @@ if the table does not exist it will be created on your first request:
 
     });
 
-    return ModelName;
+    /**
+     * Methods
+     * Configure which methods should be available for this resource.
+     * * ALL adds all available methods [GET, LIST, POST, PUT, PATCH, DELETE, NEW, COUNT]
+     * * Or you can pass only the ones you want to make available (eg: [GET, LIST]
+     **/
+    FirstModel.allow = ['ALL']
+
+    /**
+     * Validations
+     * The currently available validation methos are:
+     * validatesPresenceOf([field_name], [field_name])
+     * validatesLengthOf([field_name], {min: 5, message: {min: 'Value is too short'}});
+     * validatesInclusionOf([field_name], {in: ['value1', 'value2']});
+     * validatesExclusionOf([field_name], {in: ['value1', 'value2', 'value3']});
+     * validatesNumericalityOf([field_name], {int: true});
+     * validatesUniquenessOf([field_name], {message: 'Field is not unique'});
+     * validate([field_name], [validationFunction (err)], {message: 'Bad name'}]
+     **/
+    FirstModel.validatesPresenceOf(
+		'uuid',
+		'boolean',
+		'string',
+		'float',
+		'integer',
+		'blob',
+		'text',
+		'json',
+		'date'
+	)
+    FirstModel.validatesUniquenessOf('username')
+
+    return FirstModel;
 })
 ```
 
 Models are based on the [Ceminte Cross-Db ORM](https://github.com/biggora/caminte) package, they have an awesome model
 creator that you can use to create your first model's. [Model Creator](http://www.camintejs.com/en/creator)
 
+#### Create a Jambda configuration file
+
+This is the minimun configuration needed for Jambda to run:
+
+```
+name: 'resource'
+database:
+  production:
+    driver: 'rethinkdb'
+    host: '127.0.0.1'
+    port: 32773
+    database: 'test_api'
+    autoReconnect: true
+
+  development:
+    driver: 'rethinkdb'
+    host: '127.0.0.1'
+    port: 32773
+    database: 'test_api'
+    autoReconnect: true
+
+  test:
+    driver: 'rethinkdb'
+    host: '127.0.0.1'
+    port: 32773
+    database: 'test_api'
+    autoReconnect: true
+```
+
 #### Create your lambda function
 
 Create the function that will receive the events from the Api Gateway and pass it to Jambda.
-To create an instance of Jambda, pass the connector name, currently one of: redis, rethinkdb,
-mysqldb, mariadb, mongodb, arangodb, firebase, and an array of models.
+To create an instance of Jambda, pass the path to your configuration file, and an array of models.
 
 ```javascript
-export const handler = Jambda([connector], [[FirstModel, SecondModel, ...]])
+export const handler = Jambda([path_to_the_configuration_file], [[FirstModel, SecondModel, ...]])
+```
+
+That is it for Jambda! Keep going for hints on the serverless configuration.
+
+## Serverless
+
+Here you find some examples on setting up the Serverless platform to deploy to AWS with just a couple of commands.
+
+#### Install Serverless
+
+The minimun you need is the serverless package, the serverless-wepack (if you are using webpack that is), and serverless-offline, to run it localy:
+
+```
+npm install -g serverless
+```
+
+```
+npm install serverless-webpack serverless-offline --save
 ```
 
 #### Create a serverless.yml
 
 In the root of your project, create a file called `serverless.yml`, bellow is a simple example of
 a serverless.yml file, for more options please refer to the [serverless docs](https://serverless.com/framework/docs/providers/aws/guide/quick-start/).
+**Remeber to replace the PROJECT_NAME & REGION placeholders with your own values:**
 
 ```yaml
 service:
-  name: {{PROJECT_NAME}}
+  name: PROJECT_NAME
   publish: false
 
 plugins:
@@ -126,21 +205,38 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs6.10
-  region: {{REGION}}
-  stage: dev
+  runtime: nodejs6.10                           // The node version, AWS Lambda only accepts nodejs 6.10 for now
+  region: REGION                                // your AWS region name
+  stage: ${opt:stage, 'development'}            // The stage options is important to identify development, staging and prod routes in the Api Gateway setup
   environment:
-    ${env:}
+    NODE_ENV: ${opt:stage, 'development'}       // The env variable can be passed as an option to the cli or default to development
+    SLS_DEBUG: true                             // Usefull in development for more detailed logs from serverless
 
 functions:
   user:
-    handler: dist/handler
-    events:
+    handler: src/index.handler                  // Path to the Lambda named handler
+    events:                                     // Api Gateway HTTP events, will proxy all requests to the Jambda server
       - http: 'ANY /'
       - http: 'ANY /{proxy+}'
 ```
 
-#### Deploy to AWS
+#### Run it localy
+
+To simulate the Lambda/Api Gateway environment localy run:
+
+```javascript
+serverless offline
+```
+
+Done! You have your self a REST api for each of the models passed to the Jambda constructor running at `http://localhost:3000`
+
+Each of the resources will have it's own named url:
+
+```
+http://localhost:3000/[resource_name]
+```
+
+## Deploy to AWS
 
 Assuming you have your [AWS credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) set up, all you have to do is deploy your function using serverless-cli:
 
@@ -148,56 +244,62 @@ Assuming you have your [AWS credentials](https://docs.aws.amazon.com/cli/latest/
 serverless deploy
 ```
 
-Done! You have your self a REST api for every single model you have passed in to Jambda!
-
-## How to run it locally
-
-To run your lambda REST api locally Jambda provides the offline command, to run it type on the console:
-
-```javascript
-npm offline
-```
+## REST Api
 
 Once the server is up, you will have the following endpoints at your service:
 
 ##### NEW a Record
 
-> GET /[:tablename]
+Get a new record from the server
+
+> GET /[:resource_name]/new
+
+**Response:**
+
+* Success: {Object} A new unsaved record with all properties available in the model
+* Error: {Object}
 
 ##### LIST Records
 
-> GET /[tablename]
+List all records from a resource
+
+> GET /[resource_name]
+
+**Response:**
+A new unsaved record with all properties available in the model
 
 ##### GET a Record
 
-> GET /[:tablename]/[:id]
+Get an specific record by id
+
+> GET /[:resource_name]/[:id]
 
 ##### COUNT Records
 
-> GET /[tablename]/count
+Count records from a resource
+
+> GET /[resource_name]/count
 
 ##### POST a Record
 
-> POST /[:tablename]
+Post a new record for a resource
+
+> POST /[:resource_name]
 
 ##### PATCH a Record
 
-> PATCH /[:tablename]/[:id]
+Patch a record a record by id
+
+> PATCH /[:resource_name]/[:id]
 
 ##### PUT a Record
 
-> PUT /[:tablename]
+Put a record on the datanase
+
+> PUT /[:resource_name]
 
 ##### DELETE a Record
 
-> DELETE /[:tablename]/[:id]
+Delete a record by id
 
-## Options
-
-There are currently a few options you can use to customize Jambda:
-
-```json
-{
-	"database": {}
-}
-```
+> DELETE /[:resource_name]/[:id]
