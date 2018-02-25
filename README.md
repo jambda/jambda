@@ -4,10 +4,11 @@
 
 **This project is still under development and will be open for pull request's soon.**
 
+[![npm](https://img.shields.io/npm/v/jambda.svg)](https://www.npmjs.com/package/jambda)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/650bb0ae80ec4bfab67f3e630496529b)](https://www.codacy.com/app/layoutzweb/jambda?utm_source=github.com&utm_medium=referral&utm_content=layoutzweb/jambda&utm_campaign=Badge_Grade)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-jambda.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Build Status](https://travis-ci.org/layoutzweb/jambda.svg?branch=master)](https://travis-ci.org/layoutzweb/jambda)
-[![npm](https://img.shields.io/npm/dt/express.svg)]()
+[![NPM Downloads](https://img.shields.io/npm/dm/jambda.svg?style=flat)](https://www.npmjs.org/package/jambda)
 
 Jambda was created out of my desire to get better at node and get more experience with
 serverless platforms.
