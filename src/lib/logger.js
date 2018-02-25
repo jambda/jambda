@@ -6,8 +6,9 @@ import winston from 'winston'
  * @param {Object[]} transports A list of transports to be used for the new logger
  * @returns {winston.Logger} the logger instance
  */
-export const createLogger = (transports = null) =>
-	new winston.Logger({
+export const createLogger = (transports = null) => {
+	return new winston.Logger({
+		level: 'debug',
 		transports: transports || [
 			new winston.transports.File({
 				filename: `./logs/${process.env.NODE_ENV.toLowerCase()}_error.log`,
@@ -23,5 +24,6 @@ export const createLogger = (transports = null) =>
 		expressFormat: true,
 		colorize: true
 	})
+}
 
 export const logger = createLogger()
