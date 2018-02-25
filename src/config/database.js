@@ -1,26 +1,27 @@
 import caminte from 'caminte'
+import YAML from 'js-yaml'
 const Schema = caminte.Schema
-import promisify from './../helper/promisify'
-
+import fs from 'fs'
 /**
  * The database connector
  *
- * @param {string} connector The connector name
+ * @param {string} config The connector name
  * @returns {schema.Schema} The connection
  */
-const connect = connector => {
+const connect = config => {
 	let params
-	const config = require(`./connectors/${connector}.js`)
+
+	const { database } = YAML.safeLoad(fs.readFileSync(config, 'utf8'))
 
 	switch (process.env.NODE_ENV) {
 		case 'production':
-			params = config.production()
+			params = database.production
 			break
 		case 'test':
-			params = config.test()
+			params = database.test
 			break
 		default:
-			params = config.development()
+			params = database.development
 			break
 	}
 
