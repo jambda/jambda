@@ -1,17 +1,15 @@
 import caminte from 'caminte'
-import YAML from 'js-yaml'
 const Schema = caminte.Schema
-import fs from 'fs'
+import * as config from './config'
 /**
  * The database connector
  *
- * @param {string} config The connector name
  * @returns {schema.Schema} The connection
  */
-const connect = config => {
+const connect = () => {
 	let params
 
-	const { database } = YAML.safeLoad(fs.readFileSync(config, 'utf8'))
+	const database = config.get('database')
 
 	switch (process.env.NODE_ENV) {
 		case 'production':
