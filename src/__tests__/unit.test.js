@@ -2,7 +2,9 @@ if (!process.env.NODE_ENV) {
 	process.env.NODE_ENV = 'test'
 }
 import connect from '../config/database'
-const schema = connect('./src/__tests__/config/connector.yml')
+import * as config from './../config/config'
+config.load('./src/__tests__/config/connector.yml')
+const schema = connect()
 import Model from './model'
 const Resource = new Model(schema)
 import postData from './data/post-data'

@@ -32,7 +32,7 @@ module.exports = function(schema) {
 		'date'
 	)
 
-	Model.allow = ['GET', 'LIST']
+	Model.allow = ['ALL']
 
 	Model.validatesUniquenessOf('uuid')
 

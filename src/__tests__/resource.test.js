@@ -4,7 +4,9 @@ if (!process.env.NODE_ENV) {
 
 import connect from '../config/database'
 import Model from './model'
-const schema = connect('./src/__tests__/config/connector.yml')
+import * as config from './../config/config'
+config.load('./src/__tests__/config/connector.yml')
+const schema = connect()
 const model = new Model(schema)
 
 import postData from './data/post-data'
@@ -42,7 +44,7 @@ describe('model model:', function() {
 
 	it('#exists', done => {
 		model.exists(id, (err, exists) => {
-			expect(err).toBeNull()
+			expect(err).toBeFalsy()
 			expect(exists).toEqual(true)
 
 			done()
@@ -51,7 +53,7 @@ describe('model model:', function() {
 
 	it('#findById', done => {
 		model.findById(id, (err, found) => {
-			expect(err).toBeNull()
+			expect(err).toBeFalsy()
 			expect(found.id).not.toBeNull()
 			done()
 		})
@@ -65,7 +67,7 @@ describe('model model:', function() {
 				}
 			},
 			(err, found) => {
-				expect(err).toBeNull()
+				expect(err).toBeFalsy()
 				expect(found.id).toEqual(id)
 
 				done()
@@ -75,7 +77,7 @@ describe('model model:', function() {
 
 	it('#find', done => {
 		model.find({}, (err, founds) => {
-			expect(err).toBeNull()
+			expect(err).toBeFalsy()
 			expect(founds.length).toBeGreaterThan(0)
 
 			done()
@@ -84,7 +86,7 @@ describe('model model:', function() {
 
 	it('#all', done => {
 		model.all({}, (err, founds) => {
-			expect(err).toBeNull()
+			expect(err).toBeFalsy()
 			expect(founds.length).toBeGreaterThan(0)
 
 			done()
@@ -93,7 +95,7 @@ describe('model model:', function() {
 
 	it('#count', done => {
 		model.count({}, (err, count) => {
-			expect(err).toBeNull()
+			expect(err).toBeFalsy()
 			expect(count).toBeGreaterThan(0)
 
 			done()
@@ -102,10 +104,10 @@ describe('model model:', function() {
 
 	it('#destroyById', done => {
 		model.destroyById(id, err => {
-			expect(err).toBeNull()
+			expect(err).toBeFalsy()
 
 			model.findById(id, (err, found) => {
-				expect(err).toBeNull()
+				expect(err).toBeFalsy()
 				expect(found).toBeNull()
 
 				done()
@@ -115,10 +117,10 @@ describe('model model:', function() {
 
 	it('#destroyAll', done => {
 		model.destroyAll(err => {
-			expect(err).toBeNull()
+			expect(err).toBeFalsy()
 
 			model.find({}, (err, founds) => {
-				expect(err).toBeNull()
+				expect(err).toBeFalsy()
 				expect(founds).toHaveLength(0)
 
 				done()
