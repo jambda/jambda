@@ -1,3 +1,5 @@
+import _Object$assign from 'babel-runtime/core-js/object/assign'
+import _Promise from 'babel-runtime/core-js/promise'
 import fs from 'fs'
 import path from 'path'
 import cloneDeep from 'lodash/cloneDeep'
@@ -11,7 +13,7 @@ import yaml from 'yamljs'
  * @returns {function(*=): *} The result
  */
 export const pipe = (...fns) => x =>
-    fns.reduce((prev, f) => prev.then(f), Promise.resolve(x))
+    fns.reduce((prev, f) => prev.then(f), _Promise.resolve(x))
 
 /**
  * Clones an object passing the new properties
@@ -21,7 +23,7 @@ export const pipe = (...fns) => x =>
  * @returns {Object} The new cloned object
  */
 export const clone = (object, newObject = {}) =>
-    Object.assign({}, cloneDeep(object), newObject)
+    _Object$assign({}, cloneDeep(object), newObject)
 
 /**
  * Checks if a variable is a object\

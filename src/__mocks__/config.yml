@@ -1,4 +1,4 @@
-platform: serverless
+platform: web
 server:
   cors:
     from: mydomain.com
@@ -24,4 +24,5 @@ modules:
   - modules/cors
   - modules/body-parser
   - modules/logger
-  - modules/helmet
+  - __mocks__/modules/moduleOne
+  - __mocks__/modules/moduleTwo

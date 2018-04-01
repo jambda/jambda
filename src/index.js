@@ -1,8 +1,9 @@
 import express from 'express'
-import yaml from 'yamljs'
 import extend from 'lodash/extend'
 import serverless from 'serverless-http'
-import moduleLoader from './lib/modules'
+import loader from './lib/loader'
+import { loadYaml } from './helper/util'
+import { TEST, SERVERLESS } from './config/constants'
 
 /**
  * The Jambda function
@@ -11,16 +12,19 @@ import moduleLoader from './lib/modules'
  * @returns {Promise<*>} The Jambda class
  */
 const Jambda = async function(configFilePath) {
-    const defaultConfig = yaml.load('./config/config.yml')
-    const config = yaml.load(configFilePath)
+    const config = loadYaml(__dirname, 'config/config.yml')
 
-    extend(defaultConfig, config)
+    extend(config, loadYaml(configFilePath))
 
     const app = express()
 
-    await moduleLoader(app, config)
+    await loader(app, config)
 
-    return serverless(app)
+    if (config.platform === SERVERLESS && process.env.NODE_ENV !== TEST) {
+        return serverless(app)
+    }
+
+    return app
 }
 
 export default Jambda

@@ -8,7 +8,7 @@ extends:
 env:
   node: true
   es6: true
-  jest/globals: true
+  jest: true
 parser: babel-eslint
 rules:
   import/no-commonjs: off
@@ -27,10 +27,15 @@ rules:
         ClassDeclaration: true
         ArrowFunctionExpression: true
         FunctionExpression: true
+
   valid-jsdoc:
     - error
     - prefer:
         return: returns
+
+  no-console: off
+  no-underscore-dangle: off
+
 settings:
   import/resolver: node
 globals:
