@@ -1,5 +1,4 @@
 {
-	"verbose": true,
-	"collectCoverage": true,
-	"testRegex": "(/__tests__/.*(.test))\\.js?$"
+    "verbose": true,
+    "collectCoverage": true
 }

@@ -1,0 +1,6 @@
+export const PRODUCTION = 'test'
+export const STAGING = 'test'
+export const DEVELPMENT = 'development'
+export const TEST = 'test'
+export const PLATFORM = 'platform'
+export const SERVERLESS = 'serverless'
